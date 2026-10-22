@@ -31,13 +31,16 @@ public class Garage
     // Methods
     #region ParkVehicle
     // Method: The public access modifier allows Program.cs to call this method.
-    public bool ParkVehicle(Vehicle vehicle)
+    public bool ParkVehicle(Vehicle vehicle, bool showMessage = true)
     {
         // Parameter validation: checks the incoming method parameter vehicle exists. Rejects a null vehicle passed by mistake to this method. Example: garage.ParkVehicle(null). 
         if (vehicle == null)
         {
-            System.Console.WriteLine("The vehicle could not be parked: the vehicle object cannot be null.");
-            return false; // vehicle is null
+            if (showMessage)
+            {
+                System.Console.WriteLine("The vehicle could not be parked: the vehicle object cannot be null.");
+            }
+            return false; // vehicle is null                
         }
 
         // Duplicate validation: registration number must be unique.
@@ -46,7 +49,10 @@ public class Garage
             if (_vehicles[j] != null &&
             _vehicles[j].RegistrationNumber.ToUpper() == vehicle.RegistrationNumber.ToUpper()) // _vehicles[j] != null to ensure the slot contains a vehicle before accessing its properties. When _vehicles[j] is null, C# never evaluates _vehicles[j].RegistrationNumber, avoiding a NullReferenceException.
             {
-                System.Console.WriteLine($"The vehicle could not be parked: Registration Number {vehicle.RegistrationNumber} duplicated.");
+                if (showMessage)
+                {
+                    System.Console.WriteLine($"The vehicle could not be parked: Registration Number {vehicle.RegistrationNumber} duplicated.");
+                }
                 return false;
             }
         }
@@ -58,11 +64,17 @@ public class Garage
             if (_vehicles[i] == null)
             {
                 _vehicles[i] = vehicle;
-                System.Console.WriteLine($"Vehicle {vehicle.RegistrationNumber} successfully parked.");
+                if (showMessage)
+                {
+                    System.Console.WriteLine($"Vehicle {vehicle.RegistrationNumber} successfully parked.");
+                }
                 return true; // parked
             }
         }
-        System.Console.WriteLine("The vehicle could not be parked: the garage is full.");
+        if (showMessage)
+        {
+            System.Console.WriteLine("The vehicle could not be parked: the garage is full.");
+        }
         return false; // full
     }
     #endregion

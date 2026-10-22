@@ -29,7 +29,7 @@ Vehicle[] sampleVehicles =
 foreach (Vehicle vehicle in sampleVehicles)
 {
     // garage.ParkVehicle(sampleVehicles[i]);
-    if (!garage.ParkVehicle(vehicle))
+    if (!garage.ParkVehicle(vehicle, showMessage: false))
     {
         if (garage.ListVehicles().Length >= capacity)
         {
