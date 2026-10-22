@@ -1,0 +1,184 @@
+# ============================================
+# Visual Studio / .NET
+# ============================================
+
+# Build output
+[Bb]in/
+[Oo]bj/
+
+# Visual Studio cache / user-specific files
+.vs/
+*.user
+*.userosscache
+*.suo
+*.rsuser
+
+# Visual Studio generated files
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+
+# JetBrains Rider / ReSharper
+.idea/
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# ============================================
+# .NET / NuGet
+# ============================================
+
+# NuGet packages
+*.nupkg
+*.snupkg
+packages/
+!packages/build/
+!packages/repositories.config
+
+# NuGet cache / generated files
+.nuget/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# ============================================
+# ASP.NET / .NET generated files
+# ============================================
+
+# Generated files
+Generated/
+generated/
+
+# ASP.NET temporary files
+wwwroot/lib/
+
+# ============================================
+# Logs
+# ============================================
+
+*.log
+logs/
+[Ll]og/
+[Ll]ogs/
+
+# ============================================
+# Test results / coverage
+# ============================================
+
+TestResults/
+[Tt]est[Rr]esult*/
+*.trx
+coverage/
+coverage.*.xml
+*.coverage
+*.coveragexml
+
+# ============================================
+# Publish output
+# ============================================
+
+publish/
+Publish/
+*.publishsettings
+
+# ============================================
+# User-specific project files
+# ============================================
+
+*.user
+*.suo
+*.userprefs
+
+# ============================================
+# OS generated files
+# ============================================
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+
+# Windows image folders
+[.][Ss]potlight-V100
+$RECYCLE.BIN/
+Desktop.ini
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# macOS metadata
+._*
+
+# ============================================
+# Temporary files
+# ============================================
+
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+*.bak
+
+# ============================================
+# Database files
+# ============================================
+
+# Local databases
+*.db
+*.db-shm
+*.db-wal
+
+# SQLite
+*.sqlite
+*.sqlite3
+
+# ============================================
+# Environment / secrets
+# ============================================
+
+.env
+.env.*
+!.env.example
+
+# ============================================
+# Azure / deployment
+# ============================================
+
+.azure/
+*.publish.xml
+
+# ============================================
+# Docker
+# ============================================
+
+# Docker local environment
+docker-compose.override.yml
+
+# ============================================
+# MSBuild generated files
+# ============================================
+
+*.binlog
+*.binlog.*
+msbuild.log
+
+# ============================================
+# Code analysis
+# ============================================
+
+*.sarif
+
+# ============================================
+# Miscellaneous generated files
+# ============================================
+
+*.pidb
+*.svclog
+*.pdb
+*.cache
