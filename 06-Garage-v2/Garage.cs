@@ -1,13 +1,15 @@
 /*
 The class Garage stores a collection of vehicles
-The collection must be an array
-The array must be private. Access modifier: private.
+The collection must be a List<Vehicles>
+The list must be private. Access modifier: private.
 The garage capacity must be specified through the constructor.
+List<Vehicle> requires the System.Collections.Generic namespace.
 */
 public class Garage
 {
     // Field
-    private Vehicle[] _vehicles; // private: _vehicles can only be accessed from inside the class.
+    private List<Vehicle> _vehicles; // private: _vehicles can only be accessed from inside the class.
+    private readonly int _capacity; // readonly: applies only to fields. garage.capacity -> Compilation error
 
     // Constructor: same name as the class, none return type.
     public Garage(int capacity)
@@ -20,12 +22,8 @@ public class Garage
                 "Garage capacity must be greater than zero."
             );
         }
-        this._vehicles = new Vehicle[capacity];
-        // Creates an array with 'capacity' positions.
-        // Each position initially contains null because
-        // Vehicle is a reference type.
-        // 'this' refers to the current object and is optional here.
-
+        _vehicles = new List<Vehicle>(); // An empty List is created.
+        _capacity = capacity;
     }
 
     // Methods
@@ -44,10 +42,12 @@ public class Garage
         }
 
         // Duplicate validation: registration number must be unique.
-        for (int j = 0; j < _vehicles.Length; j++)
+        for (int j = 0; j < _vehicles.Count; j++)
         {
-            if (_vehicles[j] != null &&
-            _vehicles[j].RegistrationNumber.ToUpper() == vehicle.RegistrationNumber.ToUpper()) // _vehicles[j] != null to ensure the slot contains a vehicle before accessing its properties. When _vehicles[j] is null, C# never evaluates _vehicles[j].RegistrationNumber, avoiding a NullReferenceException.
+            if (string.Equals(
+                _vehicles[j].RegistrationNumber,
+                vehicle.RegistrationNumber,
+                StringComparison.OrdinalIgnoreCase))
             {
                 if (showMessage)
                 {
@@ -56,26 +56,22 @@ public class Garage
                 return false;
             }
         }
-
-        // Find the first null in the array to park a vehicle. Finds a parking spot.
-        for (int i = 0; i < _vehicles.Length; i++)
+        // Reject parking when the garage is full.
+        if (_vehicles.Count >= _capacity)
         {
-            // Stores the vehicle in the first empty position.
-            if (_vehicles[i] == null)
+            if (showMessage)
             {
-                _vehicles[i] = vehicle;
-                if (showMessage)
-                {
-                    System.Console.WriteLine($"Vehicle {vehicle.RegistrationNumber} successfully parked.");
-                }
-                return true; // parked
+                System.Console.WriteLine("The vehicle could not be parked: the garage is full.");
             }
+            return false; // garage full.
         }
+
+        _vehicles.Add(vehicle);
         if (showMessage)
         {
-            System.Console.WriteLine("The vehicle could not be parked: the garage is full.");
+            System.Console.WriteLine($"Vehicle {vehicle.RegistrationNumber} successfully parked.");
         }
-        return false; // full
+        return true; // parked.
     }
     #endregion
 
@@ -90,13 +86,17 @@ public class Garage
             return false;
         }
 
-        // Search for the vehicle in the array _vehicles.
-        for (int i = 0; i < _vehicles.Length; i++)
+        // Search for the vehicle in the List _vehicles.
+        for (int i = 0; i < _vehicles.Count; i++)
         {
-            if (_vehicles[i] != null && _vehicles[i].RegistrationNumber.ToUpper() == registrationNumber.ToUpper())
+            if (string.Equals(
+                 _vehicles[i].RegistrationNumber,
+                 registrationNumber,
+                 StringComparison.OrdinalIgnoreCase
+                 ))
             {
-                // Remove the vehicle by making its array position empty.
-                _vehicles[i] = null;
+                // Remove the matching vehicle from the list.
+                _vehicles.Remove(_vehicles[i]);
                 System.Console.WriteLine($"Vehicle's registration number: {registrationNumber} successfully removed.");
                 return true;
             }
@@ -107,32 +107,10 @@ public class Garage
     #endregion
 
     #region ListVehicles
-    // Method: If countVehicles=0, the array allVehiclesInGarage does not store elements because there are no vehicles to copy
+    // Method: Returns an array of vehicles in the list.
     public Vehicle[] ListVehicles()
     {
-        int countVehicles = 0;
-
-        for (int i = 0; i < _vehicles.Length; i++)
-        {
-            if (_vehicles[i] != null)
-            {
-                countVehicles++;
-            }
-        }
-        Vehicle[] allVehiclesInGarage = new Vehicle[countVehicles]; // If countVehicles = 0, Vehicle[] allVehiclesInGarage = new Vehicle[0], is valid in C# -> An array exists with zero elements. This method would return an empty array.
-
-        int counter = 0;
-
-        for (int i = 0; i < _vehicles.Length; i++)
-        {
-            if (_vehicles[i] != null)
-            {
-                allVehiclesInGarage[counter] = _vehicles[i]; // If countVehicles=0, the array allVehiclesInGarage does not store elements because there are no vehicles to copy
-                // System.Console.WriteLine($"{allVehiclesInGarage[counter].RegistrationNumber}");
-                counter++;
-            }
-        }
-        return allVehiclesInGarage;
+        return _vehicles.ToArray();
     }
     #endregion
 
@@ -146,9 +124,12 @@ public class Garage
             return null;
         }
 
-        for (int i = 0; i < _vehicles.Length; i++)
+        for (int i = 0; i < _vehicles.Count; i++)
         {
-            if (_vehicles[i] != null && registrationNumber.ToUpper() == _vehicles[i].RegistrationNumber.ToUpper())
+            if (string.Equals(
+            _vehicles[i].RegistrationNumber,
+            registrationNumber,
+            StringComparison.InvariantCultureIgnoreCase))
             {
                 System.Console.WriteLine($"The vehicle {_vehicles[i].RegistrationNumber} found.");
                 return _vehicles[i];
@@ -171,9 +152,12 @@ public class Garage
 
         int countVehicles = 0;
 
-        for (int i = 0; i < _vehicles.Length; i++)
+        for (int i = 0; i < _vehicles.Count; i++)
         {
-            if (_vehicles[i] != null && _vehicles[i].Color.ToUpper() == color.ToUpper())
+            if (string.Equals(
+                _vehicles[i].Color,
+                color,
+                StringComparison.InvariantCultureIgnoreCase))
             {
                 countVehicles++;
             }
@@ -181,9 +165,13 @@ public class Garage
 
         Vehicle[] allVehiclesByColor = new Vehicle[countVehicles];
         int counter = 0;
-        for (int i = 0; i < _vehicles.Length; i++)
+        for (int i = 0; i < _vehicles.Count; i++)
         {
-            if (_vehicles[i] != null && _vehicles[i].Color.ToUpper() == color.ToUpper())
+            if (string.Equals(
+                _vehicles[i].Color,
+                color,
+                StringComparison.InvariantCultureIgnoreCase
+            ))
             {
                 allVehiclesByColor[counter] = _vehicles[i];
                 counter++;
@@ -194,68 +182,63 @@ public class Garage
     #endregion
 
     #region FindVehiclesByNumberOfWheels
-    // Method: Returns and empty array if it does not match vehicles with numberOfWheels input. 
+    // Find all vehicles matching the specified number of wheels.
     public Vehicle[] FindVehiclesByNumberOfWheels(int numberOfWheels)
     {
-        // this check is invalid because numberOfWheels is an int, and a non-nullable int cannot be null
-        // if (numberOfWheels == null)
-        // {
-        //     System.Console.WriteLine("Number of wheels cannot be null. Returned: []");
-        //     return [];
-        // }        
-
         int countVehicleWheels = 0;
 
-        for (int i = 0; i < _vehicles.Length; i++)
+        for (int i = 0; i < _vehicles.Count; i++)
         {
-            if (_vehicles[i] != null && _vehicles[i].NumberOfWheels == numberOfWheels)
+            if (_vehicles[i].NumberOfWheels == numberOfWheels)
             {
                 countVehicleWheels++;
             }
         }
-        Vehicle[] vehiclesByWheels = new Vehicle[countVehicleWheels];
 
+        Vehicle[] vehiclesByWheels = new Vehicle[countVehicleWheels];
         int counter = 0;
 
-        for (int i = 0; i < _vehicles.Length; i++)
+        for (int i = 0; i < _vehicles.Count; i++)
         {
-            if (_vehicles[i] != null && _vehicles[i].NumberOfWheels == numberOfWheels)
+            if (_vehicles[i].NumberOfWheels == numberOfWheels)
             {
                 vehiclesByWheels[counter] = _vehicles[i];
                 counter++;
             }
         }
+
         return vehiclesByWheels;
     }
     #endregion
 
-    #region FindVehiclesByFuelType    
-    // Method: uses `_vehicles[i] is a Car car` to verify the Type of Vehicle, in this case Car. 
+    #region FindVehiclesByFuelType
+    // Find all cars matching the specified fuel type.
     public Vehicle[] FindVehiclesByFuelType(Car.FuelType fuelType)
     {
         int countVehiclesFuelType = 0;
 
-        for (int i = 0; i < _vehicles.Length; i++)
+        for (int i = 0; i < _vehicles.Count; i++)
         {
-            // _vehicles[i] is Car car, Checks whether _vehicles[i] is a Car and, if so, assigns the object to the local variable car.
-            // vehicles[i] != null is unnecessary because if _vehicles[i] is null, the (is Car car) check returns false.
-            // car.GetType() == typeof(Car) is also valid but it does not check subclasses of subclases, checks whether the object's exact runtime type is Car. Instead, (is) checks the specified type and all its derived types, including subclasses of subclasses, at any inheritance depth, that is, also matches instances of subclasses of Car: public class Car : Vehicle { } | public class ElectricCar : Car { } | public class Tesla : ElectricCar { }
-            if ((_vehicles[i] is Car car) && (car.Fuel == fuelType))
+            if (_vehicles[i] is Car car && car.Fuel == fuelType)
             {
                 countVehiclesFuelType++;
             }
         }
-        Vehicle[] allVehiclesByFuelType = new Vehicle[countVehiclesFuelType];
+
+        Vehicle[] allVehiclesByFuelType =
+            new Vehicle[countVehiclesFuelType];
+
         int counter = 0;
 
-        for (int i = 0; i < _vehicles.Length; i++)
+        for (int i = 0; i < _vehicles.Count; i++)
         {
-            if ((_vehicles[i] is Car car) && (car.Fuel == fuelType))
+            if (_vehicles[i] is Car car && car.Fuel == fuelType)
             {
-                allVehiclesByFuelType[counter] = _vehicles[i];
+                allVehiclesByFuelType[counter] = car;
                 counter++;
             }
         }
+
         return allVehiclesByFuelType;
     }
     #endregion
@@ -303,11 +286,12 @@ public class Garage
     #endregion
 
     #region FindMotorcyclesByCylinderVolume
+    // Find motorcycles matching the specified cylinder volume.
     public Vehicle[] FindMotorcyclesByCylinderVolume(int cylinderVolume)
     {
         int count = 0;
 
-        for (int i = 0; i < _vehicles.Length; i++)
+        for (int i = 0; i < _vehicles.Count; i++)
         {
             if (_vehicles[i] is Motorcycle motorcycle &&
                 motorcycle.CylinderVolume == cylinderVolume)
@@ -319,7 +303,7 @@ public class Garage
         Vehicle[] results = new Vehicle[count];
         int index = 0;
 
-        for (int i = 0; i < _vehicles.Length; i++)
+        for (int i = 0; i < _vehicles.Count; i++)
         {
             if (_vehicles[i] is Motorcycle motorcycle &&
                 motorcycle.CylinderVolume == cylinderVolume)
@@ -334,12 +318,12 @@ public class Garage
     #endregion
 
     #region FindAirplanesByNumberOfEngines
-    // Method
+    // Find airplanes matching the specified number of engines.
     public Vehicle[] FindAirplanesByNumberOfEngines(int numberOfEngines)
     {
         int counter = 0;
 
-        for (int i = 0; i < _vehicles.Length; i++)
+        for (int i = 0; i < _vehicles.Count; i++)
         {
             if (_vehicles[i] is Airplane airplane &&
                 airplane.NumberOfEngines == numberOfEngines)
@@ -351,7 +335,7 @@ public class Garage
         Vehicle[] results = new Vehicle[counter];
         int index = 0;
 
-        for (int i = 0; i < _vehicles.Length; i++)
+        for (int i = 0; i < _vehicles.Count; i++)
         {
             if (_vehicles[i] is Airplane airplane &&
                 airplane.NumberOfEngines == numberOfEngines)
@@ -366,12 +350,12 @@ public class Garage
     #endregion
 
     #region FindBusesByNumberOfSeats
-    // Method
+    // Find buses matching the specified number of seats.
     public Vehicle[] FindBusesByNumberOfSeats(int numberOfSeats)
     {
         int counter = 0;
 
-        for (int i = 0; i < _vehicles.Length; i++)
+        for (int i = 0; i < _vehicles.Count; i++)
         {
             if (_vehicles[i] is Bus bus &&
                 bus.NumberOfSeats == numberOfSeats)
@@ -383,7 +367,7 @@ public class Garage
         Vehicle[] results = new Vehicle[counter];
         int index = 0;
 
-        for (int i = 0; i < _vehicles.Length; i++)
+        for (int i = 0; i < _vehicles.Count; i++)
         {
             if (_vehicles[i] is Bus bus &&
                 bus.NumberOfSeats == numberOfSeats)
@@ -398,12 +382,12 @@ public class Garage
     #endregion
 
     #region FindBoatsByLength
-    // Method
+    // Find boats matching the specified length.
     public Vehicle[] FindBoatsByLength(double length)
     {
         int counter = 0;
 
-        for (int i = 0; i < _vehicles.Length; i++)
+        for (int i = 0; i < _vehicles.Count; i++)
         {
             if (_vehicles[i] is Boat boat &&
                 boat.Length == length)
@@ -415,7 +399,7 @@ public class Garage
         Vehicle[] results = new Vehicle[counter];
         int index = 0;
 
-        for (int i = 0; i < _vehicles.Length; i++)
+        for (int i = 0; i < _vehicles.Count; i++)
         {
             if (_vehicles[i] is Boat boat &&
                 boat.Length == length)
@@ -430,82 +414,18 @@ public class Garage
     #endregion
 
     #region FindVehiclesByCriteria
-    // Method: the criteria are based in the combination of the parameters. As a programmer I have to think in terms of the user's input also.
+    // Find vehicles matching all supplied criteria.
     public Vehicle[] FindVehiclesByCriteria(
         string? registrationNumber = null,
         string? color = null,
         int? numberOfWheels = null,
         string? vehicleType = null)
     {
-        // First for: count matching vehicles.
+        // First pass: count matching vehicles.
         int counter = 0;
-        for (int i = 0; i < _vehicles.Length; i++)
+
+        for (int i = 0; i < _vehicles.Count; i++)
         {
-            if (_vehicles[i] == null)
-            {
-                continue;
-            }
-
-            // Equals: Compares the actual vehicle type with the type requested by the user, ignoring uppercase and lowercase differences. "Car".Equals("car", StringComparison.OrdinalIgnoreCase); --> True
-            // Ordinal: compares the characters directly, without language-specific linguistic rules.
-            // IgnoreCase: ignores differences between uppercase and lowercase letters.    
-            // HasValue: if true->the variable contains a value, if false->contains null. int? numberOfWheels = null; is equivalent to: Nullable<int> numberOfWheels = null;
-            // GetType(): returns a Type object. Its Name property returns the type's name as a string
-
-            // This block filters vehicles by registration number.
-            if (!string.IsNullOrWhiteSpace(registrationNumber) &&
-                !_vehicles[i].RegistrationNumber.Equals(
-                    registrationNumber,
-                    StringComparison.OrdinalIgnoreCase))
-            {
-                continue;
-            }
-
-            // This block filters vehicles by color.
-            if (!string.IsNullOrWhiteSpace(color) &&
-                !_vehicles[i].Color.Equals(
-                    color,
-                    StringComparison.OrdinalIgnoreCase))
-            {
-                continue;
-            }
-
-            // This block filters vehicles by number of wheels.
-            if (numberOfWheels.HasValue &&
-                _vehicles[i].NumberOfWheels != numberOfWheels.Value)
-            {
-                continue;
-            }
-
-            // This block filters vehicles by their type, such as Car, Boat, Motorcycle, etc. Compares (_vehicles[i].GetType().Name) data type in string with (vehicleType and StringComparison.OrdinalIgnoreCase)
-            string actualType = _vehicles[i].GetType().Name; // GetType() returns a Type object. Its Name property returns the type's name as a string. Then, it is compared the actual vehicle type with the type requested by the user, ignoring uppercase and lowercase differences.
-            if (!string.IsNullOrWhiteSpace(vehicleType))
-            {
-                bool typesDoNotMatch = !actualType.Equals(
-                    vehicleType,
-                    StringComparison.OrdinalIgnoreCase);
-
-                if (typesDoNotMatch)
-                {
-                    continue;
-                }
-            }
-            counter++;
-        }
-
-        // Create an array with exactly the number of matches.
-        Vehicle[] results = new Vehicle[counter];
-
-        // Second for: copy matching vehicles into the result array.
-        int index = 0;
-
-        for (int i = 0; i < _vehicles.Length; i++)
-        {
-            if (_vehicles[i] == null)
-            {
-                continue;
-            }
-
             if (!string.IsNullOrWhiteSpace(registrationNumber) &&
                 !_vehicles[i].RegistrationNumber.Equals(
                     registrationNumber,
@@ -536,9 +456,50 @@ public class Garage
                 continue;
             }
 
-            results[index] = _vehicles[i]!;
+            counter++;
+        }
+
+        // Create an array with exactly the number of matches.
+        Vehicle[] results = new Vehicle[counter];
+        int index = 0;
+
+        // Second pass: copy matching vehicles into the result array.
+        for (int i = 0; i < _vehicles.Count; i++)
+        {
+            if (!string.IsNullOrWhiteSpace(registrationNumber) &&
+                !_vehicles[i].RegistrationNumber.Equals(
+                    registrationNumber,
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            if (!string.IsNullOrWhiteSpace(color) &&
+                !_vehicles[i].Color.Equals(
+                    color,
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            if (numberOfWheels.HasValue &&
+                _vehicles[i].NumberOfWheels != numberOfWheels.Value)
+            {
+                continue;
+            }
+
+            if (!string.IsNullOrWhiteSpace(vehicleType) &&
+                !_vehicles[i].GetType().Name.Equals(
+                    vehicleType,
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            results[index] = _vehicles[i];
             index++;
         }
+
         return results;
     }
     #endregion
