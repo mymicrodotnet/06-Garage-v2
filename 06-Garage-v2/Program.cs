@@ -8,7 +8,7 @@ System.Console.WriteLine("");
 
 //*** POPULATING THE GARAGE ***
 #region GaragePopulation
-Vehicle[] sampleVehicles =
+List<Vehicle> sampleVehicles = new List<Vehicle>
 {
     new Car("ABC111", "Red", 4, Car.FuelType.Gasoline),
     new Car("ABC222", "Black", 4, Car.FuelType.Gasoline),
@@ -31,7 +31,7 @@ foreach (Vehicle vehicle in sampleVehicles)
     // garage.ParkVehicle(sampleVehicles[i]);
     if (!garage.ParkVehicle(vehicle, showMessage: false))
     {
-        if (garage.ListVehicles().Length >= capacity)
+        if (garage.ListVehicles().Count >= capacity)
         {
             break;
         }
@@ -77,15 +77,15 @@ while (running)
             break;
 
         case "2": // Remove a vehicle
-            string registrationToRemove = ReadRegistrationNumber("Registration number: ");
+            string registrationToRemove = ReadRegistrationNumber("\nRegistration number: ");
 
             garage.RemoveVehicle(registrationToRemove);
             break;
 
-        case "3": // List all vehicles -> submenu
-            Vehicle[] vehicles = garage.ListVehicles();
+        case "3": // List all vehicles
+            List<Vehicle> vehicles = garage.ListVehicles();
 
-            if (vehicles.Length == 0)
+            if (vehicles.Count == 0)
             {
                 Console.WriteLine("The garage is empty.");
             }
@@ -104,11 +104,11 @@ while (running)
 
         case "5":
             Console.WriteLine($"Garage capacity: {capacity}");
-            Console.WriteLine($"Parked vehicles: {garage.ListVehicles().Length}");
+            Console.WriteLine($"Parked vehicles: {garage.ListVehicles().Count}");
             break;
 
         case "6":
-            string registrationToFind = ReadRegistrationNumber("Registration number: ");
+            string registrationToFind = ReadRegistrationNumber("\nRegistration number: ");
 
             Vehicle? found =
                 garage.FindVehicleByRegistrationNumber(registrationToFind);
@@ -125,17 +125,17 @@ while (running)
             break;
 
         case "8": // Search by number of weels
-            int wheels = ReadIntegerInput("Number of wheels: ", 0);
+            int wheels = ReadIntegerInput("\nNumber of wheels: ", 0);
             DisplayResults(garage.FindVehiclesByCriteria(numberOfWheels: wheels));
             break;
 
-        case "9":
+        case "9": // Search by vehicle-specific properties -> submenu
             SearchBySpecificProperties();
             break;
 
-        case "10": // Search using multiple criteria
+        case "10": // Search using multiple criteria -> submenu
             string? registration = ReadOptionalRegistrationNumber(
-"Registration number (Enter to skip): ");
+                "\nRegistration number (Enter to skip): ");
 
             string? searchColor =
                 ReadOptionalColor("Color (Enter to skip): ");
@@ -148,13 +148,13 @@ while (running)
                     "Vehicle type (Car/Motorcycle/Airplane/Bus/Boat; Enter to skip): ");
             System.Console.WriteLine("");
 
-            Vehicle[] matches = garage.FindVehiclesByCriteria(
+            List<Vehicle> matchesColor = garage.FindVehiclesByCriteria(
                 registrationNumber: registration,
                 color: searchColor,
                 numberOfWheels: searchWheels,
                 vehicleType: vehicleType);
 
-            DisplayResults(matches);
+            DisplayResults(matchesColor);
             break;
 
         case "0": // Exit
@@ -165,7 +165,9 @@ while (running)
             break;
 
         default:
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("Invalid menu option. Try again.");
+            Console.ResetColor();
             break;
     }
 }
@@ -177,7 +179,7 @@ while (running)
 void ParkVehicle()
 {
     Console.ForegroundColor = ConsoleColor.Cyan;
-    Console.WriteLine("\nVehicle types:");
+    Console.WriteLine("Vehicle types:");
     Console.WriteLine("1. Car");
     Console.WriteLine("2. Motorcycle");
     Console.WriteLine("3. Airplane");
@@ -191,7 +193,9 @@ void ParkVehicle()
     while (type != "0" && type != "1" && type != "2" &&
            type != "3" && type != "4" && type != "5")
     {
+        Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine("Invalid vehicle type. Choose between 0 and 5.");
+        Console.ResetColor();
         type = ReadRequiredString("Choose vehicle type: ");
     }
 
@@ -200,9 +204,9 @@ void ParkVehicle()
         return;
     }
 
-    string registration = ReadRegistrationNumber("Registration number: ");
+    string registration = ReadRegistrationNumber("\nRegistration number: ");
     string vehicleColor = ReadColor("Color: ");
-    int vehicleWheels = ReadIntegerInput("Number of wheels: ", 0);
+    int vehicleWheels = ReadIntegerInput("\nNumber of wheels: ", 0);
 
     try
     {
@@ -218,28 +222,28 @@ void ParkVehicle()
                 break;
 
             case "2": // Motorcycle
-                int cylinderVolume = ReadIntegerInput("Cylinder volume (cc): ", 1);
+                int cylinderVolume = ReadIntegerInput("\nCylinder volume (cc): ", 1);
 
                 vehicle = new Motorcycle(
                     registration, vehicleColor, vehicleWheels, cylinderVolume);
                 break;
 
             case "3": // Airplane
-                int engines = ReadIntegerInput("Number of engines: ", 1);
+                int engines = ReadIntegerInput("\nNumber of engines: ", 1);
 
                 vehicle = new Airplane(
                     registration, vehicleColor, vehicleWheels, engines);
                 break;
 
             case "4": // Bus
-                int seats = ReadIntegerInput("Number of seats: ", 1);
+                int seats = ReadIntegerInput("\nNumber of seats: ", 1);
 
                 vehicle = new Bus(
                     registration, vehicleColor, vehicleWheels, seats);
                 break;
 
             default: // Boat
-                double length = ReadDouble("Boat length: ", 5.0);
+                double length = ReadDouble("\nBoat length: ", 5.0);
 
                 vehicle = new Boat(
                     registration, vehicleColor, vehicleWheels, length);
@@ -284,7 +288,7 @@ void DisplayVehicle(Vehicle vehicle)
             break;
 
         case Boat boat:
-            Console.WriteLine($"Length: {boat.Length.ToString("F1", System.Globalization.CultureInfo.InvariantCulture)}\n");
+            Console.WriteLine($"Length: {boat.BoatLength.ToString("F1", System.Globalization.CultureInfo.InvariantCulture)}\n");
             break;
     }
 }
@@ -309,7 +313,10 @@ void SearchBySpecificProperties()
     while (choice != "0" && choice != "1" && choice != "2" &&
        choice != "3" && choice != "4" && choice != "5")
     {
+        Console.ForegroundColor = ConsoleColor.Red;
+
         Console.WriteLine("Invalid menu option. Choose between 0 and 5.");
+        Console.ResetColor();
         choice = ReadRequiredString("Choose an option: ");
     }
 
@@ -344,7 +351,9 @@ void SearchBySpecificProperties()
             return;
 
         default:
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("Invalid menu option.");
+            Console.ResetColor();
             break;
     }
 }
@@ -367,8 +376,9 @@ static Car.FuelType ReadFuelType()
         {
             return Car.FuelType.Diesel;
         }
-
+        Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine("Invalid fuel type. Enter Gasoline or Diesel.");
+        Console.ResetColor();
     }
 }
 #endregion
@@ -386,9 +396,10 @@ static int ReadIntegerInput(string prompt, int minimum)
         {
             return value;
         }
-
+        Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine(
             $"Enter a whole number greater than or equal to {minimum}.");
+        Console.ResetColor();
     }
 }
 #endregion
@@ -415,9 +426,10 @@ static double ReadDouble(string prompt, double minimum)
                 return value;
             }
         }
-
+        Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine(
             $"Enter a number greater than or equal to {minimum.ToString(System.Globalization.CultureInfo.InvariantCulture)}.");
+        Console.ResetColor();
     }
 }
 #endregion
@@ -471,17 +483,19 @@ static int? ReadOptionalInt(string prompt)
             return value;
         }
 
+        Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine(
             "Enter a non-negative whole number or press Enter to skip.");
+        Console.ResetColor();
     }
 }
 #endregion
 
 // Method for displying results in search using multiple criteria: 
 #region DisplayResults
-void DisplayResults(Vehicle[] results)
+void DisplayResults(List<Vehicle> results)
 {
-    if (results.Length == 0)
+    if (results.Count == 0)
     {
         Console.WriteLine("No matching vehicles found.");
         return;
@@ -507,9 +521,10 @@ static string ReadRegistrationNumber(string prompt)
         {
             return registrationNumber;
         }
-
+        Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine(
             "Invalid registration number. Use exactly 3 letters followed by 3 digits (e.g., ABC123).");
+        Console.ResetColor();
     }
 }
 #endregion
@@ -535,9 +550,10 @@ static string? ReadOptionalRegistrationNumber(string prompt)
         {
             return input;
         }
-
+        Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine(
             "Invalid registration number. Use exactly 3 letters followed by 3 digits (e.g., ABC123), or press Enter to skip.");
+        Console.ResetColor();
     }
 }
 #endregion
@@ -555,7 +571,7 @@ static string ReadColor(string prompt)
 
     Console.ForegroundColor = ConsoleColor.Cyan;
     Console.WriteLine(
-        $"Available colors: {string.Join(", ", validColors)}");
+        $"\nAvailable colors: {string.Join(", ", validColors)}");
     System.Console.WriteLine((""));
     Console.ResetColor();
 
