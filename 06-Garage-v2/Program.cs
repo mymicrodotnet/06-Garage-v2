@@ -174,7 +174,8 @@ while (running)
 #endregion
 
 // ***** METHODS *****
-// Menu choice 1
+// Method for parking a vehicle: Menu 1.
+// Creates a vehicle based on the user's input and attempts to park it.
 #region ParkVehicle
 void ParkVehicle()
 {
@@ -243,10 +244,10 @@ void ParkVehicle()
                 break;
 
             default: // Boat
-                double length = ReadDouble("\nBoat length: ", 5.0);
+                double boatLength = ReadDouble("\nBoat length: ", 0.1);
 
                 vehicle = new Boat(
-                    registration, vehicleColor, vehicleWheels, length);
+                    registration, vehicleColor, vehicleWheels, boatLength);
                 break;
         }
 
@@ -259,7 +260,8 @@ void ParkVehicle()
 }
 #endregion
 
-// Method to display vehicles. Menu choice: 3 and 4
+// Method for displaying a vehicle: Menus 3, 6, 7, 8, 9, and 10.
+// Displays the vehicle's common properties and its type-specific properties.
 #region DisplayVehice
 void DisplayVehicle(Vehicle vehicle)
 {
@@ -294,7 +296,8 @@ void DisplayVehicle(Vehicle vehicle)
 }
 #endregion
 
-// Method choice menu 9
+// Method for searching by vehicle-specific properties: Menu 9.
+// Requests a property value and displays the matching vehicles.
 #region SearchBySpecificProperties
 void SearchBySpecificProperties()
 {
@@ -343,8 +346,8 @@ void SearchBySpecificProperties()
             break;
 
         case "5":
-            double length = ReadDouble("Boat length: ", 0.1);
-            DisplayResults(garage.FindBoatsByLength(length));
+            double boatLength = ReadDouble("Boat length: ", 0.1);
+            DisplayResults(garage.FindBoatsByLength(boatLength));
             break;
 
         case "0":
@@ -359,7 +362,8 @@ void SearchBySpecificProperties()
 }
 #endregion
 
-// Method for Fuel type validation
+// Method for validating fuel type: Car creation and vehicle-specific search.
+// Returns a valid FuelType value and repeats the prompt for invalid input.
 #region ReadFuelType
 static Car.FuelType ReadFuelType()
 {
@@ -383,7 +387,8 @@ static Car.FuelType ReadFuelType()
 }
 #endregion
 
-// Method for Integer input validation
+// Method for validating integer input: Used wherever a whole number is required.
+// Returns an integer that meets the specified minimum value.
 #region ReadIntegerInput
 static int ReadIntegerInput(string prompt, int minimum)
 {
@@ -404,7 +409,7 @@ static int ReadIntegerInput(string prompt, int minimum)
 }
 #endregion
 
-// Method for Double input validation: converts the user's input into a decimal number and checks that it meets the minimum allowed value.
+// Method for validating double input validation: converts the user's input into a decimal number and checks that it meets the minimum allowed value.
 #region ReadDouble
 static double ReadDouble(string prompt, double minimum)
 {
@@ -434,7 +439,8 @@ static double ReadDouble(string prompt, double minimum)
 }
 #endregion
 
-// Method for string input validation
+// Method for required string input: Used wherever a non-empty string is required.
+// Returns the trimmed input and repeats the prompt if the input is empty.
 #region ReadRequiredString
 static string ReadRequiredString(string prompt)
 {
@@ -453,7 +459,8 @@ static string ReadRequiredString(string prompt)
 }
 #endregion
 
-// Method validation for Search using multiple criteria
+// Method for optional string input: Menu 10, search by multiple criteria.
+// Returns a trimmed string or null if the user presses Enter.
 #region ReadOptionalString
 static string? ReadOptionalString(string prompt)
 {
@@ -464,7 +471,8 @@ static string? ReadOptionalString(string prompt)
 }
 #endregion
 
-// Method validation for Search using multiple criteria
+// Method for optional integer input: Menu 10, search by multiple criteria.
+// Returns a non-negative integer or null if the user presses Enter.
 #region ReadOptionalInt
 static int? ReadOptionalInt(string prompt)
 {
@@ -491,7 +499,8 @@ static int? ReadOptionalInt(string prompt)
 }
 #endregion
 
-// Method for displying results in search using multiple criteria: 
+// Method for displaying search results: Menus 7, 8, 9, and 10.
+// Displays matching vehicles or a message if no matches are found.
 #region DisplayResults
 void DisplayResults(List<Vehicle> results)
 {
@@ -508,7 +517,8 @@ void DisplayResults(List<Vehicle> results)
 }
 #endregion
 
-// Method for registration number validation
+// Method for validating registration numbers: Vehicle creation and registration search.
+// Returns a registration number containing exactly three letters followed by three digits.
 #region ReadRegistrationNumber
 static string ReadRegistrationNumber(string prompt)
 {
@@ -529,7 +539,8 @@ static string ReadRegistrationNumber(string prompt)
 }
 #endregion
 
-// Method for optional registration number validation
+// Method for optional registration number validation: Menu 10 (search by criteria).
+// Returns nullable string. If the user presses ENTER, it returns null.
 #region ReadOptionalRegistrationNumber
 static string? ReadOptionalRegistrationNumber(string prompt)
 {
@@ -558,11 +569,12 @@ static string? ReadOptionalRegistrationNumber(string prompt)
 }
 #endregion
 
-// Method for color validation
+// Method for color validation: menu 7 (search by color) and parking vehicles.
+// Returns a string. If the user presses ENTER, the color is requested again.
 #region ReadColor
 static string ReadColor(string prompt)
 {
-    string[] validColors =
+    List<string> validColors = new List<string>
     {
         "Red", "Black", "White", "Blue", "Pink",
         "Green", "Yellow", "Orange", "Purple",
@@ -595,11 +607,12 @@ static string ReadColor(string prompt)
 }
 #endregion
 
-// Method for optional color validation
+// Method for optional color validation: Menu 10 (search by criteria).
+// Returns nullable string. If the user presses Enter, it returns null.
 #region ReadOptionalColor
 static string? ReadOptionalColor(string prompt)
 {
-    string[] validColors =
+    List<string> validColors = new List<string>
     {
         "Red", "Black", "White", "Blue", "Pink",
         "Green", "Yellow", "Orange", "Purple",

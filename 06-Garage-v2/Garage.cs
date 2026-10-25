@@ -163,7 +163,7 @@ public class Garage
     #region FindVehiclesByColor
     // Method: Returns a list of vehicles matching the specified color.
     // Returns an empty list if the color is invalid or no vehicles match.
-    // This is an empty List: `new List<Vehicle>()`. It requires the keyword `new`.
+    // This creates an empty list: `new List<Vehicle>()`. It requires the keyword `new`.
     public List<Vehicle> FindVehiclesByColor(string color)
     {
         if (string.IsNullOrWhiteSpace(color))
@@ -247,7 +247,7 @@ public class Garage
     #endregion
 
     #region FindVehiclesByFuelType    
-    // Find all cars matching the specified fuel type.
+    // Finds all cars matching the specified fuel type.
     public List<Vehicle> FindVehiclesByFuelType(Car.FuelType fuelType)
     {
         List<Vehicle> allVehiclesByFuelType = new List<Vehicle>();
@@ -294,7 +294,7 @@ public class Garage
                 allVehiclesByNumberOfEngines.Add(airplane);
             }
         }
-        return allVehiclesByNumberOfEngines; // If no matching returns an empty List.
+        return allVehiclesByNumberOfEngines; // Returns an empty list if no vehicles match.
     }
     #endregion
 
@@ -334,7 +334,7 @@ public class Garage
     // Method: find all vehicles that match different criteria.
     // `Nullable<T>` properties: HasValue
     // `Nullable<T>` methods: Equals.
-    // Criteria: RegistrationNumber, NumberOfWeels, Color, FuelType, CilinderVolume, NumberOfEngines, NumberOfSeats, BoatsByLength, Vehicle type.
+    // Criteria: RegistrationNumber, Color, NumberOfWheels, Vehicle type.
     public List<Vehicle> FindVehiclesByCriteria(
         string? registrationNumber = null,
         string? color = null,
